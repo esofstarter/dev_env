@@ -1,0 +1,93 @@
+# The specification version of docker-compose
+version: "3.9"
+# The collection of applications composing this service
+services:
+
+  # This container acts as an Apache webserver and PHP interpreter
+  app:
+    build:
+      context: ./bin/php
+    container_name: app
+    restart: always
+    # The external port mapping to internal port mapping
+    ports:
+      - ${HOST_MACHINE_UNSECURE_HOST_PORT}:80 # expose chosen port on host and sent to 80 in container
+      - ${HOST_MACHINE_SECURE_HOST_PORT}:443
+    # The external directory location to map to an internal location
+    volumes:
+      - ${DOCUMENT_ROOT-./www}:/var/www/html
+      - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
+      - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
+      - ${LOG_DIR-./logs/apache2}:/var/log/apache2
+    environment:
+      APACHE_DOCUMENT_ROOT: ${APACHE_DOCUMENT_ROOT-/var/www/html}
+      PMA_PORT: ${HOST_MACHINE_PMA_PORT}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    networks:
+      main:
+        aliases:
+          - starter.test
+
+  # This container contains Nodejs dependencies that take care of the JS builds
+  node:
+    build:
+      context: ./bin/node
+    container_name: node
+    restart: always
+    command: bash -c "yarn install --ignore-engines && yarn watch"
+    ports:
+      - 3030:3030
+    networks:
+      - main
+    volumes:
+      - ${NODE_ROOT-./www}:/usr/app
+    working_dir: /usr/app
+    environment:
+      HOST: 0.0.0.0
+
+  # This container is the MySql database
+  database:
+    build:
+      context: ./bin/mysql
+    container_name: database
+    restart: always
+    ports:
+      - 127.0.0.1:${HOST_MACHINE_MYSQL_PORT}:3306
+    networks:
+      - main
+    volumes:
+      - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql
+      - ${MYSQL_LOG_DIR-./logs/mysql}:/var/log/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_TCP_PORT: 3306
+
+  # This container allows phpmyadmin database access through the browser
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - ${HOST_MACHINE_PMA_PORT}:80
+    networks:
+      - main
+    environment:
+      PMA_HOST: database
+      PMA_USER: root
+      PMA_PASSWORD: tiger
+
+  # This container has redis dependencies used for caching
+  redis:
+    container_name: redis
+    image: redis:latest
+    expose:
+      - 6379
+    ports:
+      - ${HOST_MACHINE_REDIS_PORT}:6379
+    networks:
+      - main
+networks:
+  main:
