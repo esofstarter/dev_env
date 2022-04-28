@@ -35,12 +35,30 @@ services:
     container_name: node
     restart: always
     command: bash -c "yarn install --ignore-engines && yarn watch"
-    ports:
-      - 3030:3030
     networks:
       - main
     volumes:
       - ${NODE_ROOT-./www}:/usr/app
+    working_dir: /usr/app
+    environment:
+      HOST: 0.0.0.0
+
+  # This container contains Nodejs dependencies that take care of the NUXT/SSR JS builds
+  ssr-node:
+    build:
+      context: ./bin/ssr-node
+    container_name: ssr-node
+    restart: 'always'
+    command: bash -c "yarn && yarn nuxt:dev"
+    tty: true
+    ports:
+      - "3030:3030"
+    links:
+      - "app:starter.test"
+    networks:
+      - main
+    volumes:
+      - ${NUXT_NODE_ROOT-./www}:/usr/app
     working_dir: /usr/app
     environment:
       HOST: 0.0.0.0
