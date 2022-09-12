@@ -2,8 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="09af3606-6f8f-4472-b7ea-92088afc91ca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/bin/php/7.4-fpm/run.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/php/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/bin/php/7.4-fpm/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/vhosts/fitness-portal.conf" beforeDir="false" afterPath="$PROJECT_DIR$/config/vhosts/fitness-portal.conf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/apache2/error.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/apache2/error.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -11,10 +15,12 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ComposerSettings">
-    <execution />
+    <execution>
+      <executable />
+    </execution>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1tRzKYcdReU0FLeVs8gvYKogLiN" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -26,10 +32,22 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/bin/php/7.4-fpm" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/bin/php/7.4-fpm" />
+      <recent name="$PROJECT_DIR$/config/vhosts" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/bin/php" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="09af3606-6f8f-4472-b7ea-92088afc91ca" name="Default Changelist" comment="" />
@@ -38,10 +56,23 @@
       <option name="presentableId" value="Default" />
       <updated>1622746628169</updated>
       <workItem from="1622746637483" duration="13000" />
+      <workItem from="1662380539322" duration="11185000" />
+      <workItem from="1662453466842" duration="193000" />
+      <workItem from="1662977778916" duration="2175000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="2854" y="547" key="com.intellij.ide.util.TipDialog" timestamp="1662453656886">
+      <screen x="1920" y="0" width="2560" height="1440" />
+    </state>
+    <state x="2854" y="547" key="com.intellij.ide.util.TipDialog/72.208.1848.1053/1920.0.2560.1440@1920.0.2560.1440" timestamp="1662453656886" />
+    <state x="2863" y="329" width="672" height="678" key="search.everywhere.popup" timestamp="1662389777147">
+      <screen x="1920" y="0" width="2560" height="1440" />
+    </state>
+    <state x="2863" y="329" width="672" height="678" key="search.everywhere.popup/72.208.1848.1053/1920.0.2560.1440@1920.0.2560.1440" timestamp="1662389777147" />
   </component>
 </project>
