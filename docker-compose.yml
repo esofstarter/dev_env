@@ -6,7 +6,7 @@ services:
   # This container acts as an Apache webserver and PHP interpreter
   app:
     build:
-      context: ./bin/php
+      context: ./bin/php/${PHPVERSION}
     container_name: dev_env_app
     restart: always
     # The external port mapping to internal port mapping
@@ -34,9 +34,11 @@ services:
       context: ./bin/node
     container_name: dev_env_node
     restart: always
-    command: bash -c "yarn install --ignore-engines && yarn watch"
+    command: tail -F anything
+#    command: bash -c "yarn install --ignore-engines && yarn watch"
     ports:
       - 3030:3030
+      - 8888:8888
     networks:
       - main
     volumes:
