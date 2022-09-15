@@ -1,5 +1,4 @@
-FROM php:8.0.3-apache-buster
-
+FROM php:8.0.3-fpm
 # Surpresses debconf complaints of trying to install apt packages interactively
 # https://github.com/moby/moby/issues/4032#issuecomment-192327844
 
@@ -35,7 +34,7 @@ openssl && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install xdebug
-RUN pecl install xdebug-3.0.0 && \
+RUN pecl install xdebug-3.1.0 && \
     docker-php-ext-enable xdebug
 
 # Install redis
@@ -89,12 +88,22 @@ libpng-dev && \
     docker-php-ext-configure gd --enable-gd --with-freetype --with-webp --with-jpeg && \
     docker-php-ext-install gd
 
+#FAST CGI
+
+RUN apt-get update && apt-get install -y apache2 wget
+
+RUN cd /tmp && wget http://mirrors.kernel.org/ubuntu/pool/multiverse/liba/libapache-mod-fastcgi/libapache2-mod-fastcgi_2.4.7~0910052141-1.2_amd64.deb && dpkg -i libapache2-mod-fastcgi_2.4.7~0910052141-1.2_amd64.deb;apt-get install -f
+
+RUN a2enmod actions proxy_fcgi fastcgi
+
 # Enable apache modules
 RUN a2enmod rewrite headers
 
 # --------------------
 RUN a2enmod proxy_http
 RUN a2enmod proxy
+RUN a2enmod http2
+
 
 # ...
 
@@ -107,7 +116,16 @@ RUN apt-get update && apt-get install -y \
     libmemcached-dev \
     curl
 
+
 # ...
+## Activate SSL
+
+RUN openssl req -x509 -new -out fitnessportal.crt -keyout fitnessportal.key -days 365 -newkey rsa:4096 -sha256 -nodes -subj "/C=MK/ST=Bitola/L=Bitola/O=ESOF Starter/OU=IT Department/CN=ugrenovikj.stefan@gmail.com"
+
+RUN cp fitnessportal.key /etc/ssl/private/
+RUN cp fitnessportal.crt /etc/ssl/certs/
+
+RUN a2enmod ssl && a2enmod socache_shmcb
 
 # Install Memcached for php 7.4
 RUN curl -L -o /tmp/memcached.tar.gz "https://github.com/php-memcached-dev/php-memcached/archive/refs/tags/v3.1.5.tar.gz" \
@@ -119,3 +137,7 @@ RUN curl -L -o /tmp/memcached.tar.gz "https://github.com/php-memcached-dev/php-m
 
 # Cleanup
 RUN rm -rf /usr/src/*
+
+COPY run.sh /app/run.sh
+RUN chmod 755 /app/run.sh
+CMD "/app/run.sh"
