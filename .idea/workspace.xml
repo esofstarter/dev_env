@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="09af3606-6f8f-4472-b7ea-92088afc91ca" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.env.sample" beforeDir="false" afterPath="$PROJECT_DIR$/.env.sample" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/node/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/bin/node/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/vhosts/starter.conf" beforeDir="false" afterPath="$PROJECT_DIR$/config/vhosts/starter.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +54,8 @@
       <workItem from="1649851199073" duration="5099000" />
       <workItem from="1649940591910" duration="3603000" />
       <workItem from="1650008879563" duration="5414000" />
+      <workItem from="1654594314027" duration="53000" />
+      <workItem from="1666269345789" duration="42000" />
     </task>
     <servers />
   </component>
