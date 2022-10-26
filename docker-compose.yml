@@ -3,17 +3,37 @@ version: "3.9"
 # The collection of applications composing this service
 services:
 
+  traefik:
+    image: "traefik:v2.9"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http.tls=true"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - main
+    labels:
+      ## Dashboard
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.entrypoints=web"
+
   # This container acts as an Apache webserver and PHP interpreter
   app:
     build:
-      context: ./bin/php/${PHPVERSION}
+      context: ./bin/php/7.4-fpm
     container_name: dev_env_app
     restart: always
-    # The external port mapping to internal port mapping
-    ports:
-      - ${HOST_MACHINE_UNSECURE_HOST_PORT}:80 # expose chosen port on host and sent to 80 in container
-      - ${HOST_MACHINE_SECURE_HOST_PORT}:443
-    # The external directory location to map to an internal location
     volumes:
       - ./mycert.crt:/etc/ssl/certs/mycert.crt
       - ./mycert.key:/etc/ssl/private/mycert.key
@@ -25,10 +45,50 @@ services:
       APACHE_DOCUMENT_ROOT: ${APACHE_DOCUMENT_ROOT-/var/www/html}
       PMA_PORT: ${HOST_MACHINE_PMA_PORT}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - 80
     networks:
       main:
         aliases:
-          - fitness-portal.test
+          - eventlokale.test #this is needed for SSR nuxt ruting
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mousebags.rule=Host(`mousebags-git.test`)"
+      - "traefik.http.routers.eventlokale.rule=Host(`eventlokale.test`)"
+      - "traefik.http.routers.mousebags.entrypoints=web"
+      - "traefik.http.routers.eventlokale.entrypoints=web"
+      - "traefik.port=80"
+
+  # This container acts as an Apache webserver and PHP interpreter
+  app2:
+    build:
+      context: ./bin/php/php8
+    container_name: dev_env_app2
+    restart: always
+
+    volumes:
+      - ./mycert.crt:/etc/ssl/certs/mycert.crt
+      - ./mycert.key:/etc/ssl/private/mycert.key
+      - ${DOCUMENT_ROOT-./www}:/var/www/html
+      - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
+      - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
+      - ${LOG_DIR-./logs/apache2}:/var/log/apache2
+    environment:
+      APACHE_DOCUMENT_ROOT: ${APACHE_DOCUMENT_ROOT-/var/www/html}
+      PMA_PORT: ${HOST_MACHINE_PMA_PORT}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - 80
+      - 443
+    networks:
+      main:
+        aliases:
+          - fitness-portal.test #this is needed for SSR nuxt ruting
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fitnessportal.rule=Host(`fitness-portal.test`)"
+      - "traefik.http.routers.fitnessportal.entrypoints=websecure"
+      - "traefik.port=443"
 
   # This container contains Nodejs dependencies that take care of the JS builds
   node:
@@ -93,5 +153,16 @@ services:
       - ${HOST_MACHINE_REDIS_PORT}:6379
     networks:
       - main
+
+  whoami:
+    image: "traefik/whoami"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`localhost`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.port=80"
+    networks:
+      - main
 networks:
   main:
+    external : true
