@@ -15,10 +15,11 @@ services:
       - ${HOST_MACHINE_SECURE_HOST_PORT}:443
     # The external directory location to map to an internal location
     volumes:
-      - ${DOCUMENT_ROOT-./www}:/var/www/html/
       - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
       - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
       - ${LOG_DIR-./logs/apache2}:/var/log/apache2
+      - ${NODE_ROOT-./www}:/var/www/html/starter
+      - ${STARTER_FRONT_NODE_ROOT-./www}:/var/www/html/starter_front
     environment:
       APACHE_DOCUMENT_ROOT: ${APACHE_DOCUMENT_ROOT-/var/www/html}
       PMA_PORT: ${HOST_MACHINE_PMA_PORT}
@@ -26,7 +27,7 @@ services:
     networks:
       main:
         aliases:
-          - starter.test
+          - admin.starter.test
 
   # This container contains Nodejs dependencies that take care of the JS builds
   node:
@@ -35,11 +36,12 @@ services:
     container_name: node
     restart: always
     command: bash -c "cd /usr/app/starter && yarn install --ignore-engines && yarn watch"
+    ports:
+     - "3040:3040"
     networks:
       - main
     volumes:
       - ${NODE_ROOT-./www}:/usr/app/starter
-      - ${MOUSEBAGS_NODE_ROOT-./www}:/usr/app/mousebags
     working_dir: /usr/app
     environment:
       HOST: 0.0.0.0
@@ -50,16 +52,17 @@ services:
       context: ./bin/ssr-node
     container_name: ssr-node
     restart: 'always'
-    command: bash -c "yarn && yarn nuxt:dev"
+    command: bash -c "yarn && yarn nuxt:dev"    
     tty: true
     ports:
       - "3030:3030"
     links:
-      - "app:starter.test"
+      - "app:starter-front.test"
+      - node
     networks:
       - main
     volumes:
-      - ${NUXT_NODE_ROOT-./www}:/usr/app
+      - ${STARTER_FRONT_NODE_ROOT-./www}:/usr/app
     working_dir: /usr/app
     environment:
       HOST: 0.0.0.0
