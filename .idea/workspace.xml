@@ -3,11 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="09af3606-6f8f-4472-b7ea-92088afc91ca" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/php/7.4-fpm/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/bin/php/7.4-fpm/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/php/php8/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/bin/php/php8/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/vhosts/default-ssl.conf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/vhosts/fitness-portal-ssl.conf" beforeDir="false" afterPath="$PROJECT_DIR$/config/vhosts/fitness-portal-ssl.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/vhosts/fitness-portal.conf" beforeDir="false" afterPath="$PROJECT_DIR$/config/vhosts/fitness-portal.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/vhosts/fitness-portal-ssl.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/vhosts/fitness-portal.conf" beforeDir="false" afterPath="$PROJECT_DIR$/config/vhosts/e-projecta.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/vhosts/freya.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/vhosts/mousebags.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/vhosts/starter.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/vhosts/udemy.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,21 +70,31 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="2020" y="100" width="2360" height="1240" key="DiffContextDialog" timestamp="1663242680194">
-      <screen x="1920" y="0" width="2560" height="1440" />
+    <state x="219" y="100" width="3474" height="907" key="DiffContextDialog" timestamp="1669052403241">
+      <screen x="72" y="27" width="3768" height="1053" />
     </state>
     <state x="2020" y="100" width="2360" height="1240" key="DiffContextDialog/72.208.1848.1053/1920.0.2560.1440@1920.0.2560.1440" timestamp="1663242680194" />
-    <state x="2962" y="343" width="466" height="760" key="VCS.ChangeListViewerDialog" timestamp="1663242294094">
-      <screen x="1920" y="0" width="2560" height="1440" />
+    <state x="219" y="100" width="3474" height="907" key="DiffContextDialog/72.27.3768.1053/3840.0.1920.1080@72.27.3768.1053" timestamp="1669052403241" />
+    <state x="1606" y="278" width="458" height="636" key="VCS.ChangeListViewerDialog" timestamp="1669052014887">
+      <screen x="72" y="27" width="3768" height="1053" />
     </state>
     <state x="2962" y="343" width="466" height="760" key="VCS.ChangeListViewerDialog/72.208.1848.1053/1920.0.2560.1440@1920.0.2560.1440" timestamp="1663242294094" />
+    <state x="1606" y="278" width="458" height="636" key="VCS.ChangeListViewerDialog/72.27.3768.1053/3840.0.1920.1080@72.27.3768.1053" timestamp="1669052014887" />
     <state x="2854" y="547" key="com.intellij.ide.util.TipDialog" timestamp="1662453656886">
       <screen x="1920" y="0" width="2560" height="1440" />
     </state>
     <state x="2854" y="547" key="com.intellij.ide.util.TipDialog/72.208.1848.1053/1920.0.2560.1440@1920.0.2560.1440" timestamp="1662453656886" />
+    <state x="2432" y="236" width="1135" height="590" key="find.popup" timestamp="1669045817650">
+      <screen x="72" y="27" width="3768" height="1053" />
+    </state>
+    <state x="2432" y="236" width="1135" height="590" key="find.popup/72.27.3768.1053/3840.0.1920.1080@72.27.3768.1053" timestamp="1669045817650" />
     <state x="2863" y="329" width="672" height="678" key="search.everywhere.popup" timestamp="1662389777147">
       <screen x="1920" y="0" width="2560" height="1440" />
     </state>
     <state x="2863" y="329" width="672" height="678" key="search.everywhere.popup/72.208.1848.1053/1920.0.2560.1440@1920.0.2560.1440" timestamp="1662389777147" />
+    <state x="2623" y="467" width="540" height="179" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1669048458595">
+      <screen x="72" y="27" width="3768" height="1053" />
+    </state>
+    <state x="2623" y="467" width="540" height="179" key="vcs.readOnlyHandler.ReadOnlyStatusDialog/72.27.3768.1053/3840.0.1920.1080@72.27.3768.1053" timestamp="1669048458595" />
   </component>
 </project>
