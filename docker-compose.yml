@@ -1,6 +1,5 @@
 # The specification version of docker-compose
 version: "3.9"
-name: "fvs3"
 # The collection of applications composing this service
 services:
 
@@ -69,19 +68,6 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_TCP_PORT: 3306
 
-  # This container allows phpmyadmin database access through the browser
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: ${COMPOSE_PROJECT_NAME}_phpmyadmin
-    restart: always
-    ports:
-      - ${HOST_MACHINE_PMA_PORT}:80
-    networks:
-      - main
-    environment:
-      PMA_HOST: database
-      PMA_USER: root
-      PMA_PASSWORD: tiger
 
   # This container has redis dependencies used for caching
   redis:

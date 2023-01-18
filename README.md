@@ -60,6 +60,11 @@ composer install && php artisan config:cache && php artisan view:clear && php ar
 sudo chown -R www-data. . && sudo setfacl -R -m u:$USER:rwx .
 ```
 
+Make sure to disable the firewall to use Xdebug:
+```shell
+ufw disable
+```
+
 #### Possible errors
 - node | error Couldn't find a package.json file in "/usr/app" (NODE_ROOT=~/development/repositories/starter/website is missing from the env file. The path is just an example)
 - Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get ..... (Run the command with elevated permissions on ubuntu sudo.)
