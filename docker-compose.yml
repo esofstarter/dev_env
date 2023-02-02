@@ -6,7 +6,7 @@ services:
   # This container acts as an Apache webserver and PHP interpreter
   app:
     build:
-      context: ./bin/php
+      context: ./bin/php/${PHPVERSION}
     container_name: app
     restart: always
     # The external port mapping to internal port mapping
@@ -15,7 +15,10 @@ services:
       - ${HOST_MACHINE_SECURE_HOST_PORT}:443
     # The external directory location to map to an internal location
     volumes:
-      - ${DOCUMENT_ROOT-./www}:/var/www/html/
+      - ${EVENTLOKALE_ROOT-./www}:/var/www/html/eventlokale
+      - ${ABOUTEVENTS_ROOT-./www}:/var/www/html/aboutevents
+      - ${FITNESSPORTAL_ROOT-./www}:/var/www/html/fitness-portal
+      - ${MOUSEBAGS_ROOT-./www}:/var/www/html/mousebags
       - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
       - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
       - ${LOG_DIR-./logs/apache2}:/var/log/apache2
@@ -26,7 +29,10 @@ services:
     networks:
       main:
         aliases:
-          - starter.test
+          - eventlokale.test
+          - fitness-portal.test
+          - aboutevents.test
+          - mousebags.test
 
   # This container contains Nodejs dependencies that take care of the JS builds
   node:
@@ -34,32 +40,23 @@ services:
       context: ./bin/node
     container_name: node
     restart: always
-    command: bash -c "cd /usr/app/starter && yarn install --ignore-engines && yarn watch"
-    networks:
-      - main
-    volumes:
-      - ${NODE_ROOT-./www}:/usr/app/starter
-      - ${MOUSEBAGS_NODE_ROOT-./www}:/usr/app/mousebags
-    working_dir: /usr/app
-    environment:
-      HOST: 0.0.0.0
-
-  # This container contains Nodejs dependencies that take care of the NUXT/SSR JS builds
-  ssr-node:
-    build:
-      context: ./bin/ssr-node
-    container_name: ssr-node
-    restart: 'always'
-    command: bash -c "yarn && yarn nuxt:dev"
-    tty: true
+    command: tail -F anything
+#    command: bash -c "yarn install --ignore-engines && yarn watch"
     ports:
       - "3030:3030"
+      - "3060:3060"
+      - "3090:3090"
     links:
-      - "app:starter.test"
+      - "app:eventlokale.test"
+      - "app:aboutevents.test"
+      - "app:fitness-portal.test"
     networks:
       - main
     volumes:
-      - ${NUXT_NODE_ROOT-./www}:/usr/app
+      - ${EVENTLOKALE_ROOT-./www}:/usr/app/eventlokale
+      - ${ABOUTEVENTS_ROOT-./www}:/usr/app/aboutevents
+      - ${FITNESSPORTAL_ROOT-./www}:/usr/app/fitness-portal
+      - ${MOUSEBAGS_ROOT-./www}:/usr/app/mousebags
     working_dir: /usr/app
     environment:
       HOST: 0.0.0.0
@@ -69,7 +66,8 @@ services:
     build:
       context: ./bin/mysql
     container_name: database
-    restart: always
+    restart: unless-stopped
+    command: mysqld --log_error=/var/log/mysql/mysql_error.log --general_log_file=/var/log/mysql/mysql.log --general_log=1 --slow_query_log=1 --slow_query_log_file=/var/log/mysql/mysql_slow.log --long_query_time=2 --log_queries_not_using_indexes=1
     ports:
       - 127.0.0.1:${HOST_MACHINE_MYSQL_PORT}:3306
     networks:
