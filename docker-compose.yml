@@ -48,15 +48,15 @@ services:
     ports:
       - 80
     networks:
-      main:
-        aliases:
-         - eventlokale.test #this is needed for SSR nuxt ruting
+      - main
+        # aliases:
+      #  - eventlokale.test #this is needed for SSR nuxt ruting
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mousebags.rule=Host(`mousebags-git.test`)"
-      - "traefik.http.routers.eventlokale.rule=Host(`eventlokale.test`)"
+      # - "traefik.http.routers.eventlokale.rule=Host(`eventlokale.test`)"
       - "traefik.http.routers.mousebags.entrypoints=web"
-      - "traefik.http.routers.eventlokale.entrypoints=web"
+      # - "traefik.http.routers.eventlokale.entrypoints=web"
       - "traefik.port=80"
 
   # This container acts as an Apache webserver and PHP interpreter
@@ -79,7 +79,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - 80
-#      - 443
+    #      - 443
     networks:
       main:
         aliases:
@@ -100,7 +100,7 @@ services:
     container_name: dev_env_node
     restart: always
     command: tail -F anything
-#    command: bash -c "yarn install --ignore-engines && yarn watch"
+    #    command: bash -c "yarn install --ignore-engines && yarn watch"
     ports:
       - 3030:3030
       - 8888:8888
