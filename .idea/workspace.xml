@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="09af3606-6f8f-4472-b7ea-92088afc91ca" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/vhosts/php8/eventlokale-php8.conf" beforeDir="false" afterPath="$PROJECT_DIR$/config/vhosts/php8/eventlokale-php8.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/vhosts/php74/starter.conf" beforeDir="false" afterPath="$PROJECT_DIR$/config/vhosts/php74/starter.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/vhosts/php8/fitness-portal.conf" beforeDir="false" afterPath="$PROJECT_DIR$/config/vhosts/php8/fitness-portal.conf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -44,6 +43,9 @@
       </RecentBranches>
     </option>
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectId" id="1tRzKYcdReU0FLeVs8gvYKogLiN" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -52,8 +54,11 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/home/stefan/development/repositories/udemy-course/udemy",
+    "last_opened_file_path": "/home/stefan/development/repositories/fitness-portal",
+    "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -121,10 +126,23 @@
       <workItem from="1668158884093" duration="2178000" />
       <workItem from="1668161416228" duration="1312000" />
       <workItem from="1678701568097" duration="33000" />
+      <workItem from="1686316316179" duration="2173000" />
+      <workItem from="1686319386341" duration="5213000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
