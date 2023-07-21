@@ -168,4 +168,4 @@ services:
       - main
 networks:
   main:
-    external : true
+    external : false

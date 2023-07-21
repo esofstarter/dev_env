@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  cypress:
+    image: cypress/included
+    volumes:
+      - ~/.Xauthority:/root/.Xauthority:ro
+      - ${NUXT_ROOT}:/e2e
+    # - cypress_cache:/home/bozidar/development/repositories/eventlokale/website/.node_modules/.bin/cypress
+    environment:
+      - DISPLAY
+    working_dir: /e2e
+    entrypoint: [""]
+    command: ["sh", "-c", "npx cypress install && npx cypress open"] # && npm i --save-dev cypress-localstorage-commands
+    network_mode: "host"
+    stdin_open: true
+    tty: true
