@@ -2,12 +2,12 @@
 
 1. In the dev_env_nuxt directory copy .env.sample to .env
 ```shell
-cp .env.sample .env
+cp env.sample env
 ```
 
 2. Make sure to configure the ports in the .env file if the local system uses the defaults
 ```shell
-vim .env
+vim env
 ```
 
 3. From dev_env_nuxt run:
