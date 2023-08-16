@@ -1,175 +1,187 @@
-# The specification version of docker-compose
 version: "3.9"
-# The collection of applications composing this service
+x-service_defaults: &service_defaults
+  restart: always
+  stdin_open: true
+  tty: true
+  networks:
+    - traefik_default
+x-env: &service_env
+  CUSTOM_APP_URL: "http://${SERVER_NAME}"
+  APP_URL: "http://${SERVER_NAME}"
+  APP_DOMAINS: '{"ch":"http://${SERVER_NAME}/","de":"http://${SERVER_NAME}.de/","at":"http://${SERVER_NAME}.at/"}'
+  NODE_PORT: ${NODE_PORT}
+
+x-laravel-env: &laravel_env
+  APACHE_DOCUMENT_ROOT: ${APACHE_DOCUMENT_ROOT-/var/www/html}
+  MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  APACHE_LOG_DIR: /var/log/apache2
+  SERVER_NAME: "${SERVER_NAME}"
+  DOCUMENT_ROOT: "${APACHE_DOCUMENT_ROOT}/${PROJECT}/website/public"
+  NODE_SERVICE: ${NODE_SERVICE}
+  DB_HOST: "${DATABASE_SERVICE}"
+  DB_DATABASE: "${MYSQL_DATABASE}"
+  DB_PORT: "${MYSQL_PORT}"
+  DB_USERNAME: "${MYSQL_USER}"
+  DB_PASSWORD: "${MYSQL_PASSWORD}"
+
 services:
-
-  traefik:
-    image: "traefik:v2.9"
-    container_name: "traefik"
-    command:
-      #- "--log.level=DEBUG"
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.websecure.http.tls=true"
-    ports:
-      - "80:80"
-      - "443:443"
-      - "8080:8080"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    networks:
-      - main
-    labels:
-      ## Dashboard
-      - "traefik.enable=true"
-      - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.traefik.entrypoints=web"
-
-  # This container acts as an Apache webserver and PHP interpreter
-  app:
-    build:
-      context: ./bin/php/7.4-fpm
-    container_name: dev_env_app
-    restart: always
-    volumes:
-      - ./mycert.crt:/etc/ssl/certs/mycert.crt
-      - ./mycert.key:/etc/ssl/private/mycert.key
-      - ${DOCUMENT_ROOT-./www}:/var/www/html
-      - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
-      - ${PHP74_VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
-      - ${LOG_DIR-./logs/apache2}:/var/log/apache2
-    environment:
-      APACHE_DOCUMENT_ROOT: ${APACHE_DOCUMENT_ROOT-/var/www/html}
-      PMA_PORT: ${HOST_MACHINE_PMA_PORT}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    ports:
-      - 80
-    networks:
-      main:
-        aliases:
-          - starter.test
-        # aliases:
-      #  - eventlokale.test #this is needed for SSR nuxt ruting
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mousebags.rule=Host(`mousebags-git.test`)"
-      - "traefik.http.routers.starter.rule=Host(`starter.test`)"
-      # - "traefik.http.routers.eventlokale.rule=Host(`eventlokale.test`)"
-      - "traefik.http.routers.mousebags.entrypoints=web"
-      - "traefik.http.routers.starter.entrypoints=web"
-      # - "traefik.http.routers.eventlokale.entrypoints=web"
-      - "traefik.port=80"
-
-  # This container acts as an Apache webserver and PHP interpreter
-  app2:
+  el_laravel_init:
     build:
       context: ./bin/php/php8
-    container_name: dev_env_app2
-    restart: always
+    container_name: el_laravel_init
+    profiles: ["dev", "dev_vue", "prod", "test"]
+    command: bash -c "chmod 755 /app/init.sh && /bin/bash /app/init.sh"
+    # restart: always
+    depends_on:
+      - el_database
+      
+    working_dir: ${APACHE_DOCUMENT_ROOT}
 
     volumes:
-      - ./mycert.crt:/etc/ssl/certs/mycert.crt
-      - ./mycert.key:/etc/ssl/private/mycert.key
-      - ${DOCUMENT_ROOT-./www}:/var/www/html
+      # - ${DOCUMENT_ROOT-./www}:${APACHE_DOCUMENT_ROOT}/${PROJECT}
+      - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
+      # - ${PHP8_VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
+      - ${LOG_DIR-./logs/apache2}:/var/log/apache2
+      # init
+      - ~/.ssh:/root/.ssh
+      - ./bin/php/php8/init.sh:/app/init.sh
+      - ./data/${PROJECT}:${APACHE_DOCUMENT_ROOT}/${PROJECT}
+      - ./config/env/.env:${APACHE_DOCUMENT_ROOT}/.env
+
+    environment:
+      << : [*laravel_env, *service_env]
+      PROJECT: "${PROJECT}"
+      GIT_REPO: "${GIT_REPO}"
+      GIT_BRANCH: "${GIT_BRANCH}"
+
+
+    networks:
+      - traefik_default
+
+  el_laravel:
+    build:
+      context: ./bin/php/php8
+    container_name: el_laravel
+    profiles: ["dev", "dev_vue", "prod", "test"]
+    restart: always
+    depends_on:
+      el_laravel_init:
+        condition: service_completed_successfully
+      el_database:
+        condition: service_started
+
+    working_dir: ${APACHE_DOCUMENT_ROOT}
+
+    volumes:
+      # - ${DOCUMENT_ROOT-./www}:${APACHE_DOCUMENT_ROOT}/${PROJECT}
       - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
       - ${PHP8_VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
       - ${LOG_DIR-./logs/apache2}:/var/log/apache2
+
+      - ./data/${PROJECT}:${APACHE_DOCUMENT_ROOT}/${PROJECT}
+      - ./data/.env:${APACHE_DOCUMENT_ROOT}/.env
+
     environment:
-      APACHE_DOCUMENT_ROOT: ${APACHE_DOCUMENT_ROOT-/var/www/html}
-      PMA_PORT: ${HOST_MACHINE_PMA_PORT}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    ports:
-      - 80
-    #      - 443
+      << : [*laravel_env, *service_env]
+
     networks:
-      main:
+      traefik_default:
         aliases:
-          - fitness-portal.test #this is needed for SSR nuxt ruting
-          - eventlokalephp8.test #this is needed for SSR nuxt ruting
+          - "${SERVER_NAME}"
+
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.fitnessportal.rule=Host(`fitness-portal.test`)"
-      - "traefik.http.routers.eventlokalephp8.rule=Host(`eventlokalephp8.test`)"
-      - "traefik.http.routers.fitnessportal.entrypoints=web"
-      - "traefik.http.routers.eventlokalephp8.entrypoints=web"
-      - "traefik.port=80"
-
-  # This container contains Nodejs dependencies that take care of the JS builds
-  node:
+      - "traefik.http.routers.${PROJECT}.rule=Host(`${SERVER_NAME}`)"
+      - "traefik.http.routers.${PROJECT}.entrypoints=web"
+      - "traefik.http.services.${PROJECT}.loadbalancer.server.port=80"
+      
+  el_nuxt:
     build:
       context: ./bin/node
-    container_name: dev_env_node
-    restart: always
-    command: tail -F anything
-    #    command: bash -c "yarn install --ignore-engines && yarn watch"
-    ports:
-      - 3030:3030
-      - 8888:8888
-    networks:
-      - main
+    container_name: el_nuxt
+    profiles: ["none"]
+    command: bash -c "yarn && yarn nuxt-ts --dotenv ../../.env --port ${NODE_PORT}"
+    depends_on:
+      el_laravel_init:
+        condition: service_completed_successfully
+      el_laravel:
+        condition: service_started
     volumes:
-      - ${NODE_ROOT-./www}:/usr/app
-    working_dir: /usr/app
+      - ./data/${PROJECT}:/usr/app/${PROJECT}
+    working_dir: /usr/app/${PROJECT}/website/resources/nuxt
     environment:
       HOST: 0.0.0.0
+      << : *service_env
 
-  # This container is the MySql database
-  database:
-    build:
-      context: ./bin/mysql
-    container_name: dev_env_database
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://eventlokale.test || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+
+    networks:
+      traefik_default:
+        aliases:
+          - ${NODE_SERVICE}
+
+  el_nuxt_dev:
+    extends:
+      service: el_nuxt
+    container_name: el_nuxt_dev
+    profiles: ["dev", "test"]
+    command: bash -c "yarn && yarn nuxt-ts --dotenv ../../.env --port ${NODE_PORT}"
+
+  el_vue:
+    extends:
+      service: el_nuxt 
+    container_name: el_vue
+    profiles: ["dev_vue"]
+    command: bash -c "yarn --cwd ../../ && yarn --cwd ../../ watch"
+
+  el_nuxt_prod:
+    extends:
+      service: el_nuxt 
+    container_name: el_nuxt_prod
+    profiles: ["prod"]
+    command: bash -c "yarn --cwd ../../ && yarn --cwd ../../ prod && yarn && yarn nuxt-ts build --dotenv ../../.env && yarn nuxt-ts start --dotenv ../../.env --port ${NODE_PORT}"
+    
+  el_database:
+    << : *service_defaults
+    image: mariadb:10.6.14-focal
+    container_name: el_database
+    profiles: ["dev", "dev_vue", "prod", "test"]
+    command: --default-authentication-plugin=mysql_native_password
+    entrypoint: ["/bin/bash", "-c", "tar -xf  /init-scripts.tar.xz -C /docker-entrypoint-initdb.d && docker-entrypoint.sh mysqld"]
     restart: always
     ports:
-      - 127.0.0.1:${HOST_MACHINE_MYSQL_PORT}:3306
-    networks:
-      - main
-    volumes:
-      - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql
-      - ${MYSQL_LOG_DIR-./logs/mysql}:/var/log/mysql
+        - "33069:${MYSQL_PORT}"
+    volumes: 
+        - ./config/mysql-dump/init-scripts.tar.xz:/init-scripts.tar.xz
+        # - ./data/mysql-dump:/docker-entrypoint-initdb.d
+        - ./data/mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_TCP_PORT: 3306
+      MYSQL_TCP_PORT: ${MYSQL_PORT}
 
-  # This container allows phpmyadmin database access through the browser
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: dev_env_phpmyadmin
-    restart: always
-    ports:
-      - ${HOST_MACHINE_PMA_PORT}:80
-    networks:
-      - main
+  el_cypress:
+    << : *service_defaults
+    image: cypress/included
+    container_name: el_cypress
+    profiles: ["test"]
+    restart: no
+    depends_on:
+      el_nuxt_dev:
+        condition: service_healthy
+    volumes:
+      - ./data/${PROJECT}/website/resources/nuxt:/e2e
+      - ./data/cypress:/root/.cache/Cypress
+    working_dir: /e2e
+    entrypoint: [""]
+    command: ["sh", "-c", "npx cypress install && npx cypress run --spec 'cypress/e2e/3-eventlokale-nuxt/**/*'"] # && npm i --save-dev cypress-localstorage-commands
     environment:
-      PMA_HOST: database
-      PMA_USER: root
-      PMA_PASSWORD: tiger
-
-  # This container has redis dependencies used for caching
-  redis:
-    container_name: dev_env_redis
-    image: redis:latest
-    expose:
-      - 6379
-    ports:
-      - ${HOST_MACHINE_REDIS_PORT}:6379
-    networks:
-      - main
-
-  whoami:
-    image: "traefik/whoami"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`localhost`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
-      - "traefik.port=80"
-    networks:
-      - main
+      CYPRESS_BASE_URL: "http://${SERVER_NAME}"
 networks:
-  main:
-    external : true
+  traefik_default:
+    name: traefik_default
+    external: true
