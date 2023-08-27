@@ -29,7 +29,7 @@ services:
     build:
       context: ./bin/php/php8
     container_name: el_laravel_init
-    profiles: ["dev", "dev_vue", "prod", "test"]
+    profiles: ["dev", "dev_vue", "prod", "test", "debug"]
     command: bash -c "chmod 755 /app/init.sh && /bin/bash /app/init.sh"
     # restart: always
     depends_on:
@@ -62,7 +62,7 @@ services:
     build:
       context: ./bin/php/php8
     container_name: el_laravel
-    profiles: ["dev", "dev_vue", "prod", "test"]
+    profiles: ["none"]
     restart: always
     depends_on:
       el_laravel_init:
@@ -94,23 +94,41 @@ services:
       - "traefik.http.routers.${PROJECT}.rule=Host(`${SERVER_NAME}`)"
       - "traefik.http.routers.${PROJECT}.entrypoints=web"
       - "traefik.http.services.${PROJECT}.loadbalancer.server.port=80"
-      
+  
+  el_laravel_dev:
+    extends:
+      service: el_laravel
+    container_name: el_laravel_dev
+    profiles: ["dev", "dev_vue", "prod", "test"]
+
+  el_laravel_debug:
+    extends:
+      service: el_laravel
+    container_name: el_laravel_debug
+    profiles: ["debug"]
+    volumes:
+      - ./config/php/debug/php.ini:/usr/local/etc/php/php.ini
+
   el_nuxt:
+    << : *service_defaults
     build:
       context: ./bin/node
     container_name: el_nuxt
     profiles: ["none"]
     command: bash -c "yarn && yarn nuxt-ts --dotenv ../../.env --port ${NODE_PORT}"
-    depends_on:
-      el_laravel_init:
-        condition: service_completed_successfully
-      el_laravel:
-        condition: service_started
+
     volumes:
       - ./data/${PROJECT}:/usr/app/${PROJECT}
     working_dir: /usr/app/${PROJECT}/website/resources/nuxt
+    expose:
+      - 9229
+    ports:
+      - "9229:9229"
     environment:
       HOST: 0.0.0.0
+      # NODE_OPTIONS: --openssl-legacy-provider
+      # NODE_OPTIONS: '--inspect-brk=0.0.0.0:9229'
+      NODE_ENV: 'development'
       << : *service_env
 
     healthcheck:
@@ -130,6 +148,23 @@ services:
     container_name: el_nuxt_dev
     profiles: ["dev", "test"]
     command: bash -c "yarn && yarn nuxt-ts --dotenv ../../.env --port ${NODE_PORT}"
+    depends_on:
+      el_laravel_init:
+        condition: service_completed_successfully
+      el_laravel_dev:
+        condition: service_started
+
+  el_nuxt_debug:
+    extends:
+      service: el_nuxt
+    container_name: el_nuxt_debug
+    profiles: ["debug"]
+    command: bash -c "yarn && yarn cross-env NODE_OPTIONS='--inspect=0.0.0.0:9229' nuxt-ts --dotenv ../../.env --port ${NODE_PORT}"
+    depends_on:
+      el_laravel_init:
+        condition: service_completed_successfully
+      el_laravel_debug:
+        condition: service_started
 
   el_vue:
     extends:
@@ -149,7 +184,7 @@ services:
     << : *service_defaults
     image: mariadb:10.6.14-focal
     container_name: el_database
-    profiles: ["dev", "dev_vue", "prod", "test"]
+    profiles: ["dev", "dev_vue", "prod", "test", "debug"]
     command: --default-authentication-plugin=mysql_native_password
     entrypoint: ["/bin/bash", "-c", "tar -xf  /init-scripts.tar.xz -C /docker-entrypoint-initdb.d && docker-entrypoint.sh mysqld"]
     restart: always
