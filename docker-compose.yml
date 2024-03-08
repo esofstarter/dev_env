@@ -6,6 +6,7 @@ services:
   traefik:
     image: "traefik:v2.9"
     container_name: "traefik"
+    restart: always
     command:
       #- "--log.level=DEBUG"
       - "--api.insecure=true"
@@ -112,7 +113,7 @@ services:
       - main
     volumes:
       - ${NODE_ROOT-./www}:/usr/app
-    working_dir: /usr/app
+    working_dir: /usr/app/eventlokale/website/resources/nuxt
     environment:
       HOST: 0.0.0.0
 
