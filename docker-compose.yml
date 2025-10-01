@@ -88,13 +88,13 @@ services:
     networks:
       main:
         aliases:
-          - fitness-portal.test #this is needed for SSR nuxt ruting
+          - fitnesstoday.test #this is needed for SSR nuxt ruting
           - eventlokalephp8.test #this is needed for SSR nuxt ruting
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.fitnessportal.rule=Host(`fitness-portal.test`)"
+      - "traefik.http.routers.fitnesstoday.rule=Host(`fitnesstoday.test`)"
       - "traefik.http.routers.eventlokalephp8.rule=Host(`eventlokalephp8.test`)"
-      - "traefik.http.routers.fitnessportal.entrypoints=web"
+      - "traefik.http.routers.fitnesstoday.entrypoints=web"
       - "traefik.http.routers.eventlokalephp8.entrypoints=web"
       - "traefik.port=80"
 
@@ -105,7 +105,6 @@ services:
     container_name: dev_env_node
     restart: always
     command: tail -F anything
-    #    command: bash -c "yarn install --ignore-engines && yarn watch"
     ports:
       - 3030:3030
       - 8888:8888
@@ -116,6 +115,23 @@ services:
     working_dir: /usr/app/eventlokale/website/resources/nuxt
     environment:
       HOST: 0.0.0.0
+
+  # node:
+  #   build:
+  #     context: ./bin/node2
+  #   container_name: dev_env_node2
+  #   restart: always
+  #   command: tail -F anything
+  #   ports:
+  #     - 3030:3030  # Change the host port to avoid conflict
+  #     - 8888:8888  # Change the host port to avoid conflict
+  #   networks:
+  #     - main
+  #   volumes:
+  #     - ${NODE_ROOT-./www}:/usr/app
+  #   working_dir: /usr/app/eventlokale/website/resources/nuxt
+  #   environment:
+  #     HOST: 0.0.0.0
 
   # This container is the MySql database
   database:
@@ -162,6 +178,7 @@ services:
       - ${HOST_MACHINE_REDIS_PORT}:6379
     networks:
       - main
+
 
   whoami:
     image: "traefik/whoami"
